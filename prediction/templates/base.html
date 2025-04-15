@@ -1,0 +1,43 @@
+ {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<link rel="shortcut icon" type="image/png" href="{% static 'eye.ico' %}"/>
+
+<meta charset="utf-8">
+
+
+<title>Eye Prediction</title> {% block title %}{% endblock %} {% block meta %}{% endblock %}
+
+	<link rel="stylesheet" href="{% static "css/custom.css" %}?version=1.7">
+ 	<meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static "lib/fontawesome-free/css/all.min.css" %}?version=1.7">
+  <link rel="stylesheet" href="{% static "lib/adminlte/adminlte.css" %}?version=1.7">
+  <link rel="stylesheet" href="{% static "lib/overlayScrollbars/css/OverlayScrollbars.min.css" %}">
+
+  
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+</head>
+<body class="sidebar-mini layout-fixed control-sidebar-slide-open  sidebar-collapse text-sm">
+	<script src="{% static "lib/jquery/jquery.min.js" %}"></script>
+	<script src="{% static "lib/jquery/jquery-ui.min.js" %}"></script>
+	<script src="{% static "lib/adminlte/adminlte.js" %}"></script>
+
+<body>
+	<div class="wrapper">
+		{% include "top_section.html" %} 
+		{% include "left_section.html" %}
+	
+		{% block content %}{% endblock %} 
+
+	
+	
+	</div>
+	<script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+	
+	
+</body>
+</html>

@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<style>
+    /* Style for the result table */
+    .result-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    /* Style for table headers */
+    .result-table th {
+        background-color: #0492a9;
+        color: white;
+        padding: 10px;
+        text-align: left;
+    }
+
+    /* Style for table cells */
+    .result-table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+</style>
+<div class="content-wrapper">
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row justify-content-center" style="margin-top: 50px;">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Upload Images</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="upload-container" style="max-width: 100%;">
+                                <form action="{% url 'EyePrediction' %}" class="dropzone" id="myDropzone">
+                                    {% csrf_token %}
+                                    <div class="fallback">
+                                        <input name="image" type="file" accept="image/*" multiple />
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-center align-items-center">
+                                <button id="perform-prediction-button" class="btn btn-secondary btn-sm" style="background-color:#0492a9;">
+                                    <i class="fa fa-globe"></i> Perform Prediction
+                                </button>
+                                <div id="loading-spinner" style="display: none;">
+                                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="image-results-container" style=""></div>
+    </section>
+</div>
+
+
+
+<script>
+
+    document.getElementById("perform-prediction-button").style.display = "none";
+
+    Dropzone.options.myDropzone = {
+        paramName: "image",
+        maxFilesize: 5,
+        acceptedFiles: "image/*",
+        dictDefaultMessage: "Drag or drop images here or click to select",
+        init: function () {
+            this.on("success", function (file) {
+                document.getElementById("perform-prediction-button").style.display = "block";
+            });
+        },
+    };
+
+    document.getElementById("perform-prediction-button").addEventListener("click", function () {
+        var uploadedImages = Dropzone.forElement("#myDropzone").files;
+        var formData = new FormData();
+
+        for (var i = 0; i < uploadedImages.length; i++) {
+            formData.append("image", uploadedImages[i]);
+        }
+
+    
+        document.getElementById("loading-spinner").style.display = "block";
+        document.getElementById("perform-prediction-button").style.display = "none";
+
+  
+        var csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+
+
+        $.ajax({
+            url: "{% url 'process_and_predict_image' %}",
+            type: "POST",
+            data: formData,
+            processData: false, 
+            contentType: false, 
+            headers: {
+                "X-CSRFToken": csrfToken,
+            },
+            success: function (data) {
+
+                document.getElementById("loading-spinner").style.display = "none";
+
+                if (data.success) {
+
+                    var container = document.getElementById("image-results-container");
+                    container.innerHTML = ""; 
+
+
+                    var table = document.createElement("table");
+                    table.className = "result-table";
+
+
+                    var thead = document.createElement("thead");
+                    var headerRow = document.createElement("tr");
+
+
+                    var originalImageHeader = document.createElement("th");
+                    originalImageHeader.textContent = "Original Image";
+                    
+                    headerRow.appendChild(originalImageHeader);
+
+                    var resultsHeader = document.createElement("th");
+                    resultsHeader.textContent = "Predictive Disease labels";
+                    headerRow.appendChild(resultsHeader);
+
+                    thead.appendChild(headerRow);
+                    table.appendChild(thead);
+
+
+                    var tbody = document.createElement("tbody");
+
+                    for (var i = 0; i < uploadedImages.length; i++) {
+                        var row = document.createElement("tr");
+
+                        var originalImageCell = document.createElement("td");
+                        originalImageCell.className = "original-image";
+
+                        var img = document.createElement("img");
+                        img.src = URL.createObjectURL(uploadedImages[i]);
+                        img.alt = "Original Image";
+                        img.style.maxWidth = "100px"; 
+                        img.style.maxHeight = "100px"; 
+                        originalImageCell.appendChild(img);
+
+                        row.appendChild(originalImageCell);
+
+         
+                        var resultsCell = document.createElement("td");
+                        resultsCell.textContent = data.prediction_results[i].join(", "); 
+                        resultsCell.style.cssText = "font-size: larger; font-weight: bold; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);";
+                        row.appendChild(resultsCell);
+
+                        tbody.appendChild(row);
+                    }
+
+                    table.appendChild(tbody);
+                    container.appendChild(table);
+
+
+                    document.getElementById("perform-prediction-button").style.display = "block";
+                } else {
+
+                    alert("Prediction Error: " + data.message);
+                }
+            },
+            error: function (error) {
+                console.error("Error:", error);
+            },
+        });
+    });
+</script>
+
+{% endblock %}

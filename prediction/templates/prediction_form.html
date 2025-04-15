@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<style>
+    /* Center the content horizontally and vertically */
+    .center-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%; /* Ensure the container takes up the full height of its parent */
+    }
+
+    /* Set a fixed width for the content */
+    .box.radio {
+        width: 200px; /* Adjust the width as needed */
+        text-align: center;
+    }
+</style>
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-8">
+                    <h1 class="m-0 text-dark left"></h1>
+                </div>
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </div>
+    <section class="content">
+        <div class="container-fluid row">
+            <div class="col-lg-12">
+                <div class="card card-outline padding-10 mb-3 prediction-card">
+                    <div class="card-header pointer" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                        <h3 class="card-title">Prediction</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-default btn-xs" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="wizard">
+                            <div class="tab-content">
+                                <div class="tab-pane active" role="tabpanel">
+                                    <h4 class="text-center">Select Indicator</h4>
+                                    <div class="row padding-20 justify-content-center"> <!-- Center horizontally -->
+                                        <div class="col-12 text-center"> <!-- Center the content -->
+                                            <a href="{% url 'EyePrediction' %}" style="color: black">
+                                                <div class="center-content"> <!-- Center vertically -->
+                                                    <div class="box radio">
+                                                        <div class="rounded padding-10 h-margin-10 bg-light">
+                                                            <div class="icon text-lg">
+                                                                <i><img src="/static/images/icons8-eye-disease-100.png" width="110" height="110" class="text-xxl padding-20"></i>
+                                                            </div>
+                                                        </div>
+                                                        <br>
+                                                        <div class="max-width-120 center-inner center" style="font-size: larger; font-weight: bold; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">
+                                                            Eye
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </section>
+</div>
+
+{% endblock %}
